@@ -1,12 +1,50 @@
 <?xml version="1.0"?>
-
 <project>
+
+	<property name="project.lib" location="lib"/>
+	<property name="project.src" location="src"/>
+	<property name="project.build" location="build"/>
+	<property name="project.jarfile" location="${project.build}/jar/automaton-se-grid.jar"/>
 	
-	<target name="build">
+	<path id="classpath">
+		<fileset dir="${project.lib}" includes="**/*.jar"/>
+	</path>
+	<path id="project" location="${project.jarfile}"/>
+	
+	<target name="build" depends="test">
 		<echo message="Building as ${user.name} from ${basedir}"/>
 	</target>
-		
-	<target name="test">
-		<echo message="Starting tests..."/>	
+	
+	<target name="clean">
+		<delete dir="${project.build}"/>
+	</target>
+
+	<target name="compile" depends="clean">
+		<mkdir dir="${project.build}/classes"/>
+		<javac srcdir="${project.src}" destdir="${project.build}/classes" classpathref="classpath" includeantruntime="true"/>
+		<copy file="${project.src}/test.properties" todir="${project.build}/classes"/>
+	</target>
+
+	<target name="jar" depends="compile">
+		<mkdir dir="${project.build}/jar"/>
+		<jar destfile="${project.jarfile}" basedir="${project.build}/classes">
+		</jar>
+	</target>
+
+	<target name="test" depends="jar">
+		<mkdir dir="${project.build}/results"/>
+		<junit printsummary="yes">
+			<classpath>
+				<path refid="classpath"/>
+				<path refid="project"/>
+			</classpath>
+			<syspropertyset>
+				<propertyref prefix="grid"/>
+			</syspropertyset>	
+			<formatter type="xml"/>
+			<batchtest fork="true" todir="${project.build}/results">
+				<fileset dir="${project.src}" includes="com/lamoree/automaton/tests/grid/*Test.java"/>
+			</batchtest>
+		</junit>
 	</target>
 </project>

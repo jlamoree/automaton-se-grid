@@ -1,5 +1,7 @@
 package com.lamoree.automaton.tests;
 
+import java.util.Properties;
+import java.util.ResourceBundle;
 import java.util.concurrent.TimeUnit;
 
 import junit.framework.Assert;
@@ -14,17 +16,27 @@ import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 
 
 public class LoginHtmlUnitTest {
-	private String baseUrl = "http://mercedes.automaton.com/";
+	private String baseUrl;
 	private WebDriver driver;
 
 	@Before
 	public void setUp() throws Exception {
-        driver = new HtmlUnitDriver();
+		ResourceBundle rb = ResourceBundle.getBundle("test");
+		Properties p = System.getProperties();
+	
+		if (p.containsKey("baseUrl")) {
+			baseUrl = p.getProperty("baseUrl");
+		} else if (rb.containsKey("baseUrl")) {
+			baseUrl = rb.getString("baseUrl");
+		}
+		
+		driver = new HtmlUnitDriver();
 		driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
 	}
 
 	@Test
 	public void testLogin() throws Exception {
+		
 		driver.get(baseUrl + "Home/index");
 
         WebElement loginLink = driver.findElement(By.id("loginLink"));

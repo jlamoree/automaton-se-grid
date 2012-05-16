@@ -1,4 +1,4 @@
-package com.lamoree.automaton.tests;
+package com.lamoree.automaton.tests.grid;
 
 import java.net.URL;
 import java.util.Properties;
@@ -21,23 +21,24 @@ public class LoginFirefoxTest {
 	private String baseUrl;
 	private WebDriver driver;
 	private DesiredCapabilities capability;
+	private ResourceBundle rb = ResourceBundle.getBundle("test");
 
 	@Before
 	public void setUp() throws Exception {
-		ResourceBundle rb = ResourceBundle.getBundle("test");
 		Properties p = System.getProperties();
 		
-		if (p.containsKey("hubUrl")) {
-			hubUrl = p.getProperty("hubUrl");
-		} else if (rb.containsKey("hubUrl")) {
-			hubUrl = rb.getString("hubUrl");
-		}
-		if (p.containsKey("baseUrl")) {
-			baseUrl = p.getProperty("baseUrl");
-		} else if (rb.containsKey("baseUrl")) {
-			baseUrl = rb.getString("baseUrl");
+		if (p.containsKey("grid.hubUrl")) {
+			hubUrl = p.getProperty("grid.hubUrl");
+		} else if (rb.containsKey("grid.hubUrl")) {
+			hubUrl = rb.getString("grid.hubUrl");
 		}
 		
+		if (p.containsKey("grid.baseUrl")) {
+			baseUrl = p.getProperty("grid.baseUrl");
+		} else if (rb.containsKey("grid.baseUrl")) {
+			baseUrl = rb.getString("grid.baseUrl");
+		}
+
 		capability = DesiredCapabilities.firefox();
         driver = new RemoteWebDriver(new URL(hubUrl), capability);
 		driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
@@ -51,10 +52,11 @@ public class LoginFirefoxTest {
         loginLink.click();
         
 		WebElement username = driver.findElement(By.id("username"));
-		username.sendKeys("testuser");
+		username.sendKeys(rb.getString("test.username"));
 		WebElement password = driver.findElement(By.id("password"));
-		password.sendKeys("password");
-		username.submit();
+		password.sendKeys(rb.getString("test.password"));
+		WebElement loginButton = driver.findElement(By.id("loginButton"));
+		loginButton.click();
 		
 		Assert.assertEquals("The Automaton : Login", driver.getTitle());
 		
