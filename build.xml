@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+
+<project>
+	
+	<target name="build">
+		<echo message="Building as ${user.name} from ${basedir}"/>
+	</target>
+		
+	<target name="test">
+		<echo message="Starting tests..."/>	
+	</target>
+</project>
