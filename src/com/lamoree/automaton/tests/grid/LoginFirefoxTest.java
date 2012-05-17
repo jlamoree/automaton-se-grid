@@ -15,6 +15,9 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.remote.RemoteWebDriver;
 import org.openqa.selenium.remote.DesiredCapabilities;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.Wait;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
 public class LoginFirefoxTest {
 	private String hubUrl;
@@ -47,18 +50,30 @@ public class LoginFirefoxTest {
 	@Test
 	public void testLogin() throws Exception {
 		driver.get(baseUrl + "Home/index");
+		driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
+		
+        // The web app could be starting up and compiling on first load. Give it a moment
+        Wait<WebDriver> wait = new WebDriverWait(driver, 30);
 
 		WebElement loginLink = driver.findElement(By.id("loginLink"));
+		System.out.println(driver.getTitle());
         loginLink.click();
-        
-		WebElement username = driver.findElement(By.id("username"));
+
+        // Should see the login form now
+        WebElement username = wait.until(visibilityOfElementLocated(By.id("username")));
 		username.sendKeys(rb.getString("test.username"));
 		WebElement password = driver.findElement(By.id("password"));
 		password.sendKeys(rb.getString("test.password"));
 		WebElement loginButton = driver.findElement(By.id("loginButton"));
+		System.out.println(driver.getTitle());
 		loginButton.click();
-		
-		Assert.assertEquals("The Automaton : Login", driver.getTitle());
+
+		// Wait until the home page is shown with our friendly message
+        WebElement account = wait.until(visibilityOfElementLocated(By.id("account")));
+        System.out.println(driver.getTitle());
+        System.out.println(account.getText());
+        
+        //Assert.assertTrue(account.getText().contains("Hello, Unit Test"));
 		
 	}
     
@@ -66,5 +81,16 @@ public class LoginFirefoxTest {
 	public void tearDown() throws Exception {
 		driver.quit();
 	}
-    
+
+	public ExpectedCondition<WebElement> visibilityOfElementLocated(final By locator) {
+		return new ExpectedCondition<WebElement>() {
+			public WebElement apply(WebDriver driver) {
+				WebElement toReturn = driver.findElement(locator);
+				if (toReturn.isDisplayed()) {
+					return toReturn;
+				}
+				return null;
+			}
+		};
+	}
 }
