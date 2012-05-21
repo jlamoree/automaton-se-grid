@@ -52,26 +52,26 @@ public class LoginFirefoxTest {
 		driver.get(baseUrl + "Home/index");
 		driver.manage().timeouts().implicitlyWait(2, TimeUnit.SECONDS);
 		
-        // The web app could be starting up and compiling on first load. Give it a moment
-        Wait<WebDriver> wait = new WebDriverWait(driver, 30);
+        // Create a wait instance for use with wait.until()
+        Wait<WebDriver> wait = new WebDriverWait(driver, 10);
 
-		WebElement loginLink = driver.findElement(By.id("loginLink"));
-		System.out.println(driver.getTitle());
+		WebElement loginLink = wait.until(visibilityOfElementLocated(By.id("loginLink")));
+		System.out.println("Got a login link element.");
         loginLink.click();
 
         // Should see the login form now
         WebElement username = wait.until(visibilityOfElementLocated(By.id("username")));
+		System.out.println("Got a username element.");
 		username.sendKeys(rb.getString("test.username"));
 		WebElement password = driver.findElement(By.id("password"));
 		password.sendKeys(rb.getString("test.password"));
 		WebElement loginButton = driver.findElement(By.id("loginButton"));
-		System.out.println(driver.getTitle());
 		loginButton.click();
 
 		// Wait until the home page is shown with our friendly message
         WebElement account = wait.until(visibilityOfElementLocated(By.id("account")));
-        System.out.println(driver.getTitle());
-        System.out.println(account.getText());
+		System.out.println("Got the account element.");
+        System.out.println("Account innerText: " + account.getText());
         
         //Assert.assertTrue(account.getText().contains("Hello, Unit Test"));
 		
