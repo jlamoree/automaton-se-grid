@@ -19,9 +19,9 @@
 	"configuration": {
 		"maxSession": 5,
 		"port": 5555,
-		"host": "jenkins",
 		"register": true,
 		"registerCycle": 5000,
-		"hubPort": 4444
+		"hubHost": "jenkins-nat",
+		"hubPort": 14444
 	}
 }
